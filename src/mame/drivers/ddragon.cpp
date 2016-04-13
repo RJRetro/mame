@@ -963,7 +963,7 @@ static MACHINE_CONFIG_START( ddragon, ddragon_state )
 
 	/* basic machine hardware */
 	//MCFG_CPU_ADD("maincpu", HD6309, MAIN_CLOCK)     /* 12 MHz / 4 internally */
-	MDRV_CPU_ADD("maincpu", HD6309, MAIN_CLOCK_OC)		/* Speed hack - 30 MHz */
+	MCFG_CPU_ADD("maincpu", HD6309, MAIN_CLOCK_OC)		/* Speed hack - 30 MHz */
 	MCFG_CPU_PROGRAM_MAP(ddragon_map)
 	MCFG_TIMER_DRIVER_ADD_SCANLINE("scantimer", ddragon_state, ddragon_scanline, "screen", 0, 1)
 
@@ -1081,7 +1081,7 @@ static MACHINE_CONFIG_START( ddragon2, ddragon_state )
 
 	/* basic machine hardware */
 	//MCFG_CPU_ADD("maincpu", HD6309, MAIN_CLOCK)     /* 12 MHz / 4 internally */
-	MDRV_CPU_ADD("maincpu", HD6309, MAIN_CLOCK_OC)		/* Speed hack - 30 MHz */
+	MCFG_CPU_ADD("maincpu", HD6309, MAIN_CLOCK_OC)		/* Speed hack - 30 MHz */
 	MCFG_CPU_PROGRAM_MAP(dd2_map)
 	MCFG_TIMER_DRIVER_ADD_SCANLINE("scantimer", ddragon_state, ddragon_scanline, "screen", 0, 1)
 
