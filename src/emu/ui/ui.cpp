@@ -374,7 +374,7 @@ void ui_manager::display_startup_screens(bool first_time)
 	bool show_gameinfo = !machine().options().skip_gameinfo();
 	bool show_warnings = true, show_mandatory_fileman = true;
 	int state;
-
+	show_gameinfo = show_warnings = show_mandatory_fileman = FALSE;
 	// disable everything if we are using -str for 300 or fewer seconds, or if we're the empty driver,
 	// or if we are debugging
 	if (!first_time || (str > 0 && str < 60*5) || &machine().system() == &GAME_NAME(___empty) || (machine().debug_flags & DEBUG_FLAG_ENABLED) != 0)
@@ -499,10 +499,10 @@ void ui_manager::update_and_render(render_container *container)
 	m_handler_param = (*m_handler_callback)(machine(), container, m_handler_param);
 
 	// display any popup messages
-	if (osd_ticks() < m_popup_text_end)
-		draw_text_box(container, messagebox_poptext.c_str(), JUSTIFY_CENTER, 0.5f, 0.9f, messagebox_backcolor);
-	else
-		m_popup_text_end = 0;
+	//if (osd_ticks() < m_popup_text_end)
+	//	draw_text_box(container, messagebox_poptext.c_str(), JUSTIFY_CENTER, 0.5f, 0.9f, messagebox_backcolor);
+	//else
+	//	m_popup_text_end = 0;
 
 	// display the internal mouse cursor
 	if (m_mouse_show || (is_menu_active() && machine().options().ui_mouse()))
@@ -1301,7 +1301,7 @@ std::string &ui_manager::game_info_astring(std::string &str)
 
 UINT32 ui_manager::handler_messagebox(running_machine &machine, render_container *container, UINT32 state)
 {
-	machine.ui().draw_text_box(container, messagebox_text.c_str(), JUSTIFY_LEFT, 0.5f, 0.5f, messagebox_backcolor);
+	//machine.ui().draw_text_box(container, messagebox_text.c_str(), JUSTIFY_LEFT, 0.5f, 0.5f, messagebox_backcolor);
 	return 0;
 }
 
