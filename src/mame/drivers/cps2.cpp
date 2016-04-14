@@ -1287,6 +1287,28 @@ static INPUT_PORTS_START( choko )
 	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_COIN2 )
 INPUT_PORTS_END
 
+static INPUT_PORTS_START( ssf2 )
+	PORT_INCLUDE( cps2_2p6b )
+	
+	PORT_MODIFY("IN0")      /* (0x00) */
+	PORT_BIT( 0x0010, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_NAME("P1 Jab Punch") PORT_PLAYER(1)
+	PORT_BIT( 0x0020, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_NAME("P1 Strong Punch") PORT_PLAYER(1)
+	PORT_BIT( 0x0040, IP_ACTIVE_LOW, IPT_BUTTON3 ) PORT_NAME("P1 Fierce Punch") PORT_PLAYER(1)
+	PORT_BIT( 0x1000, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_NAME("P2 Jab Punch") PORT_PLAYER(2)
+	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_NAME("P2 Strong Punch") PORT_PLAYER(2)
+	PORT_BIT( 0x4000, IP_ACTIVE_LOW, IPT_BUTTON3 ) PORT_NAME("P2 Fierce Punch") PORT_PLAYER(2)
+
+	PORT_MODIFY("IN1")
+	PORT_BIT( 0x0001, IP_ACTIVE_LOW, IPT_BUTTON4 ) PORT_NAME("P1 Short Kick") PORT_PLAYER(1)
+	PORT_BIT( 0x0002, IP_ACTIVE_LOW, IPT_BUTTON5 ) PORT_NAME("P1 Forward Kick") PORT_PLAYER(1)
+	PORT_BIT( 0x0004, IP_ACTIVE_LOW, IPT_BUTTON6 ) PORT_NAME("P1 Roundhouse Kick") PORT_PLAYER(1)
+	PORT_BIT( 0x0010, IP_ACTIVE_LOW, IPT_BUTTON4 ) PORT_NAME("P2 Short Kick") PORT_PLAYER(2)
+	PORT_BIT( 0x0020, IP_ACTIVE_LOW, IPT_BUTTON5 ) PORT_NAME("P2 Forward Kick") PORT_PLAYER(2)
+
+	PORT_MODIFY("IN2")
+	PORT_BIT( 0x4000, IP_ACTIVE_LOW, IPT_BUTTON6 ) PORT_NAME("P2 Roundhouse Kick") PORT_PLAYER(2)
+	
+INPUT_PORTS_END
 
 /*************************************
  *
@@ -9435,19 +9457,19 @@ DRIVER_INIT_MEMBER(cps_state,ecofghtr)
  *
  *************************************/
 
-GAME( 1993, ssf2,       0,        cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (World 931005)", MACHINE_SUPPORTS_SAVE )
-GAME( 1993, ssf2r1,     ssf2,     cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (World 930911)", MACHINE_SUPPORTS_SAVE )
-GAME( 1993, ssf2u,      ssf2,     cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (USA 930911)", MACHINE_SUPPORTS_SAVE )
-GAME( 1993, ssf2a,      ssf2,     cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Asia 931005)", MACHINE_SUPPORTS_SAVE )
-GAME( 1993, ssf2ar1,    ssf2,     cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Asia 930914)", MACHINE_SUPPORTS_SAVE )
-GAME( 1993, ssf2j,      ssf2,     cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Japan 931005)", MACHINE_SUPPORTS_SAVE )
-GAME( 1993, ssf2jr1,    ssf2,     cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Japan 930911)", MACHINE_SUPPORTS_SAVE )
-GAME( 1993, ssf2jr2,    ssf2,     cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Japan 930910)", MACHINE_SUPPORTS_SAVE )
-GAME( 1993, ssf2h,      ssf2,     cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Hispanic 930911)", MACHINE_SUPPORTS_SAVE )
-GAME( 1993, ssf2tb,     ssf2,     cps2, cps2_2p6b, cps_state, ssf2tb,   ROT0,   "Capcom", "Super Street Fighter II: The Tournament Battle (World 931119)", MACHINE_SUPPORTS_SAVE ) // works, but not in tournament mode
-GAME( 1993, ssf2tbr1,   ssf2,     cps2, cps2_2p6b, cps_state, ssf2tb,   ROT0,   "Capcom", "Super Street Fighter II: The Tournament Battle (World 930911)", MACHINE_SUPPORTS_SAVE ) // works, but not in tournament mode
-GAME( 1993, ssf2tbj,    ssf2,     cps2, cps2_2p6b, cps_state, ssf2tb,   ROT0,   "Capcom", "Super Street Fighter II: The Tournament Battle (Japan 930911)", MACHINE_SUPPORTS_SAVE ) // works, but not in tournament mode
-GAME( 1993, ssf2tbh,    ssf2,     cps2, cps2_2p6b, cps_state, ssf2tb,   ROT0,   "Capcom", "Super Street Fighter II: The Tournament Battle (Hispanic 931005)", MACHINE_SUPPORTS_SAVE )  // works, but not in tournament mode
+GAME( 1993, ssf2,       0,        cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (World 931005)", MACHINE_SUPPORTS_SAVE )
+GAME( 1993, ssf2r1,     ssf2,     cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (World 930911)", MACHINE_SUPPORTS_SAVE )
+GAME( 1993, ssf2u,      ssf2,     cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (USA 930911)", MACHINE_SUPPORTS_SAVE )
+GAME( 1993, ssf2a,      ssf2,     cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Asia 931005)", MACHINE_SUPPORTS_SAVE )
+GAME( 1993, ssf2ar1,    ssf2,     cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Asia 930914)", MACHINE_SUPPORTS_SAVE )
+GAME( 1993, ssf2j,      ssf2,     cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Japan 931005)", MACHINE_SUPPORTS_SAVE )
+GAME( 1993, ssf2jr1,    ssf2,     cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Japan 930911)", MACHINE_SUPPORTS_SAVE )
+GAME( 1993, ssf2jr2,    ssf2,     cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Japan 930910)", MACHINE_SUPPORTS_SAVE )
+GAME( 1993, ssf2h,      ssf2,     cps2, ssf2,	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II: The New Challengers (Hispanic 930911)", MACHINE_SUPPORTS_SAVE )
+GAME( 1993, ssf2tb,     ssf2,     cps2, ssf2, 	   cps_state, ssf2tb,   ROT0,   "Capcom", "Super Street Fighter II: The Tournament Battle (World 931119)", MACHINE_SUPPORTS_SAVE ) // works, but not in tournament mode
+GAME( 1993, ssf2tbr1,   ssf2,     cps2, ssf2, 	   cps_state, ssf2tb,   ROT0,   "Capcom", "Super Street Fighter II: The Tournament Battle (World 930911)", MACHINE_SUPPORTS_SAVE ) // works, but not in tournament mode
+GAME( 1993, ssf2tbj,    ssf2,     cps2, ssf2, 	   cps_state, ssf2tb,   ROT0,   "Capcom", "Super Street Fighter II: The Tournament Battle (Japan 930911)", MACHINE_SUPPORTS_SAVE ) // works, but not in tournament mode
+GAME( 1993, ssf2tbh,    ssf2,     cps2, ssf2,	   cps_state, ssf2tb,   ROT0,   "Capcom", "Super Street Fighter II: The Tournament Battle (Hispanic 931005)", MACHINE_SUPPORTS_SAVE )  // works, but not in tournament mode
 GAME( 1993, ecofghtr,   0,        cps2, ecofghtr, cps_state, ecofghtr,  ROT0,   "Capcom", "Eco Fighters (World 931203)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, ecofghtru,  ecofghtr, cps2, ecofghtr, cps_state, ecofghtr,  ROT0,   "Capcom", "Eco Fighters (USA 940215)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, ecofghtru1, ecofghtr, cps2, ecofghtr, cps_state, ecofghtr,  ROT0,   "Capcom", "Eco Fighters (USA 931203)", MACHINE_SUPPORTS_SAVE )
@@ -9466,23 +9488,23 @@ GAME( 1993, ddtodar1,   ddtod,    cps2, cps2_4p4b, cps_state, cps2,     ROT0,   
 GAME( 1993, ddtodh,     ddtod,    cps2, cps2_4p4b, cps_state, cps2,     ROT0,   "Capcom", "Dungeons & Dragons: Tower of Doom (Hispanic 940412)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, ddtodhr1,   ddtod,    cps2, cps2_4p4b, cps_state, cps2,     ROT0,   "Capcom", "Dungeons & Dragons: Tower of Doom (Hispanic 940125)", MACHINE_SUPPORTS_SAVE )
 GAME( 1993, ddtodhr2,   ddtod,    cps2, cps2_4p4b, cps_state, cps2,     ROT0,   "Capcom", "Dungeons & Dragons: Tower of Doom (Hispanic 940113)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, ssf2t,      0,        cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (World 940223)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, ssf2ta,     ssf2t,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (Asia 940223)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, ssf2th,     ssf2t,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (Hispanic 940223)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, ssf2tu,     ssf2t,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (USA 940323)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, ssf2tur1,   ssf2t,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (USA 940223)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, ssf2xj,     ssf2t,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II X: Grand Master Challenge (Japan 940223)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, ssf2xjr,    ssf2t,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II X: Grand Master Challenge (Japan 940223 rent version)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, ssf2t,      0,        cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (World 940223)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, ssf2ta,     ssf2t,    cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (Asia 940223)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, ssf2th,     ssf2t,    cps2, ssf2,	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (Hispanic 940223)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, ssf2tu,     ssf2t,    cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (USA 940323)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, ssf2tur1,   ssf2t,    cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II Turbo (USA 940223)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, ssf2xj,     ssf2t,    cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II X: Grand Master Challenge (Japan 940223)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, ssf2xjr,    ssf2t,    cps2, ssf2,	   cps_state, cps2,     ROT0,   "Capcom", "Super Street Fighter II X: Grand Master Challenge (Japan 940223 rent version)", MACHINE_SUPPORTS_SAVE )
 GAME( 1994, avsp,       0,        cps2, cps2_3p3b, cps_state, cps2,     ROT0,   "Capcom", "Alien vs. Predator (Euro 940520)", MACHINE_SUPPORTS_SAVE )
 GAME( 1994, avspu,      avsp,     cps2, cps2_3p3b, cps_state, cps2,     ROT0,   "Capcom", "Alien vs. Predator (USA 940520)", MACHINE_SUPPORTS_SAVE )
 GAME( 1994, avspj,      avsp,     cps2, cps2_3p3b, cps_state, cps2,     ROT0,   "Capcom", "Alien vs. Predator (Japan 940520)", MACHINE_SUPPORTS_SAVE )
 GAME( 1994, avspa,      avsp,     cps2, cps2_3p3b, cps_state, cps2,     ROT0,   "Capcom", "Alien vs. Predator (Asia 940520)", MACHINE_SUPPORTS_SAVE )
 GAME( 1994, avsph,      avsp,     cps2, cps2_3p3b, cps_state, cps2,     ROT0,   "Capcom", "Alien vs. Predator (Hispanic 940520)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, dstlk,      0,        cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (Euro 940705)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, dstlku,     dstlk,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (USA 940818)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, dstlkur1,   dstlk,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (USA 940705)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, dstlka,     dstlk,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (Asia 940705)", MACHINE_SUPPORTS_SAVE )
-GAME( 1994, dstlkh,     dstlk,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (Hispanic 940818)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, dstlk,      0,        cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (Euro 940705)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, dstlku,     dstlk,    cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (USA 940818)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, dstlkur1,   dstlk,    cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (USA 940705)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, dstlka,     dstlk,    cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (Asia 940705)", MACHINE_SUPPORTS_SAVE )
+GAME( 1994, dstlkh,     dstlk,    cps2, ssf2, 	   cps_state, cps2,     ROT0,   "Capcom", "Darkstalkers: The Night Warriors (Hispanic 940818)", MACHINE_SUPPORTS_SAVE )
 GAME( 1994, vampj,      dstlk,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Vampire: The Night Warriors (Japan 940705)", MACHINE_SUPPORTS_SAVE )    // partial update set? Only rom 04 is "B" revision
 GAME( 1994, vampja,     dstlk,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Vampire: The Night Warriors (Japan 940705 alt)", MACHINE_SUPPORTS_SAVE )
 GAME( 1994, vampjr1,    dstlk,    cps2, cps2_2p6b, cps_state, cps2,     ROT0,   "Capcom", "Vampire: The Night Warriors (Japan 940630)", MACHINE_SUPPORTS_SAVE )
