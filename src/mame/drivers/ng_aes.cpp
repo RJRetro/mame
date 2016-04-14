@@ -76,12 +76,9 @@ public:
 	ng_aes_state(const machine_config &mconfig, device_type type, const char *tag)
 		: neogeo_state(mconfig, type, tag)
 		, m_io_in2(*this, "IN2")
-		, m_ctrl1(*this, "ctrl1")
-		, m_ctrl2(*this, "ctrl2")
 	{ }
 
 	DECLARE_READ16_MEMBER(aes_in2_r);
-	DECLARE_WRITE8_MEMBER(io_control_w);
 
 	DECLARE_INPUT_CHANGED_MEMBER(aes_jp1);
 
@@ -92,8 +89,6 @@ public:
 
 protected:
 	required_ioport m_io_in2;
-	required_device<neogeo_control_port_device> m_ctrl1;
-	required_device<neogeo_control_port_device> m_ctrl2;
 
 	void common_machine_start();
 };
@@ -112,21 +107,6 @@ READ16_MEMBER(ng_aes_state::aes_in2_r)
 	ret = (ret & 0xf3ff) | (m_ctrl2->read_start_sel() << 10);
 	return ret;
 }
-
-WRITE8_MEMBER(ng_aes_state::io_control_w)
-{
-	switch (offset)
-	{
-		case 0x00:
-			m_ctrl1->write_ctrlsel(data);
-			m_ctrl2->write_ctrlsel(data);
-			break;
-		default:
-			neogeo_state::io_control_w(space, offset, data);
-			break;
-	}
-}
-
 
 /*************************************
  *
@@ -312,8 +292,8 @@ static MACHINE_CONFIG_DERIVED_CLASS( aes, neogeo_base, ng_aes_state )
 
 	MCFG_NEOGEO_CARTRIDGE_ADD("cartslot1", neogeo_cart, nullptr)
 
-	MCFG_NEOGEO_CONTROL_PORT_ADD("ctrl1", neogeo_controls, "joy")
-	MCFG_NEOGEO_CONTROL_PORT_ADD("ctrl2", neogeo_controls, "joy")
+	MCFG_NEOGEO_CONTROL_PORT_ADD("ctrl1", neogeo_controls, "joy", false)
+	MCFG_NEOGEO_CONTROL_PORT_ADD("ctrl2", neogeo_controls, "joy", false)
 
 	MCFG_SOFTWARE_LIST_ADD("cart_list","neogeo")
 	MCFG_SOFTWARE_LIST_FILTER("cart_list","AES")
@@ -1402,8 +1382,8 @@ static MACHINE_CONFIG_DERIVED_CLASS( neocd, neogeo_base, ngcd_state )
 	MCFG_MACHINE_START_OVERRIDE(ngcd_state,neocd)
 	MCFG_MACHINE_RESET_OVERRIDE(ngcd_state,neocd)
 
-	MCFG_NEOGEO_CONTROL_PORT_ADD("ctrl1", neogeo_controls, "joy")
-	MCFG_NEOGEO_CONTROL_PORT_ADD("ctrl2", neogeo_controls, "joy")
+	MCFG_NEOGEO_CONTROL_PORT_ADD("ctrl1", neogeo_controls, "joy", false)
+	MCFG_NEOGEO_CONTROL_PORT_ADD("ctrl2", neogeo_controls, "joy", false)
 
 	MCFG_CDROM_ADD( "cdrom" )
 	MCFG_CDROM_INTERFACE("neocd_cdrom")
