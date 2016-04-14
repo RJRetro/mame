@@ -92,12 +92,17 @@ static INPUT_PORTS_START( hcastle )
 
 	PORT_START("P1")
 	KONAMI8_MONO_B12_UNK
+	
+	PORT_MODIFY("P1")
+	PORT_BIT( 0x10, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_NAME("Attack")
+	PORT_BIT( 0x20, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_NAME("Jump")
 
-	PORT_START("P2")
-	KONAMI8_COCKTAIL_B12_UNK
+	//PORT_START("P2")
+	//KONAMI8_COCKTAIL_B12_UNK
+	
 
 	PORT_START("DSW1")
-	KONAMI_COINAGE_LOC(DEF_STR( Free_Play ), "Invalid", SW1)
+	KONAMI_COINAGE_LOC("Free Play (If B not invalid)", "Invalid (Disables Both)", SW1)
 	/* "Invalid" = both coin slots disabled */
 
 	PORT_START("DSW2")
