@@ -820,20 +820,6 @@ INPUT_PORTS_END
 
 static INPUT_PORTS_START( baddudes )
 	PORT_INCLUDE( dec0 )
-	
-	PORT_MODIFY("INPUTS")
-	PORT_BIT( 0x0010, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_NAME("P1 Attack")
-	PORT_BIT( 0x0020, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_NAME("P1 Jump")
-	PORT_BIT( 0x1000, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_NAME("P2 Attack") PORT_COCKTAIL
-	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_NAME("P2 Jump") PORT_COCKTAIL
-	PORT_BIT( 0x0040, IP_ACTIVE_LOW, IPT_UNUSED ) /* Button 3 - only in Service Mode */
-	PORT_BIT( 0x0080, IP_ACTIVE_LOW, IPT_UNUSED ) /* Button 4 - only in Service Mode */
-	PORT_BIT( 0x4000, IP_ACTIVE_LOW, IPT_UNUSED ) PORT_COCKTAIL /* Button 3 - only in Service Mode */
-	PORT_BIT( 0x8000, IP_ACTIVE_LOW, IPT_UNUSED ) PORT_COCKTAIL /* Button 4 - only in Service Mode */
-	
-	PORT_MODIFY("SYSTEM")
-	PORT_BIT( 0x0001, IP_ACTIVE_LOW, IPT_UNUSED ) /* Button 5 - only in Service Mode */
-	PORT_BIT( 0x0002, IP_ACTIVE_LOW, IPT_UNUSED ) PORT_COCKTAIL /* Button 5 - only in Service Mode */
 
 	PORT_START("DSW")
 	DEC0_COIN_SETTING
@@ -889,21 +875,6 @@ INPUT_PORTS_END
 static INPUT_PORTS_START( robocop )
 	PORT_INCLUDE( dec0 )
 
-	
-	PORT_MODIFY("INPUTS")
-	PORT_BIT( 0x0010, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_NAME("P1 Punch / Fire")
-	PORT_BIT( 0x0020, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_NAME("P1 Jump")
-	PORT_BIT( 0x1000, IP_ACTIVE_LOW, IPT_BUTTON1 ) PORT_NAME("P2 Punch / Fire") PORT_COCKTAIL
-	PORT_BIT( 0x2000, IP_ACTIVE_LOW, IPT_BUTTON2 ) PORT_NAME("P2 Jump") PORT_COCKTAIL
-	PORT_BIT( 0x0040, IP_ACTIVE_LOW, IPT_UNUSED ) /* Button 3 - only in Service Mode */
-	PORT_BIT( 0x0080, IP_ACTIVE_LOW, IPT_UNUSED ) /* Button 4 - only in Service Mode */
-	PORT_BIT( 0x4000, IP_ACTIVE_LOW, IPT_UNUSED ) PORT_COCKTAIL /* Button 3 - only in Service Mode */
-	PORT_BIT( 0x8000, IP_ACTIVE_LOW, IPT_UNUSED ) PORT_COCKTAIL /* Button 4 - only in Service Mode */
-	
-	PORT_MODIFY("SYSTEM")
-	PORT_BIT( 0x0001, IP_ACTIVE_LOW, IPT_UNUSED ) /* Button 5 - only in Service Mode */
-	PORT_BIT( 0x0002, IP_ACTIVE_LOW, IPT_UNUSED ) PORT_COCKTAIL /* Button 5 - only in Service Mode */
-	
 	PORT_START("DSW")
 	DEC0_COIN_SETTING
 	PORT_DIPUNUSED_DIPLOC( 0x0010, IP_ACTIVE_LOW, "SW1:5" ) // Always OFF
@@ -1320,18 +1291,19 @@ static MACHINE_CONFIG_START( dec0_base, dec0_state )
 	MCFG_PALETTE_ADD("palette", 1024)
 
 	MCFG_DEVICE_ADD("tilegen1", DECO_BAC06, 0)
-	MCFG_DECO_BAC06_GFX_REGION_WIDE(0, 0, 0)
+	deco_bac06_device::set_gfx_region_wide(*device,0,0,0);
 	MCFG_DECO_BAC06_GFXDECODE("gfxdecode")
 	MCFG_DEVICE_ADD("tilegen2", DECO_BAC06, 0)
-	MCFG_DECO_BAC06_GFX_REGION_WIDE(0, 1, 0)
+	deco_bac06_device::set_gfx_region_wide(*device,0,1,0);
 	MCFG_DECO_BAC06_GFXDECODE("gfxdecode")
 	MCFG_DEVICE_ADD("tilegen3", DECO_BAC06, 0)
-	MCFG_DECO_BAC06_GFX_REGION_WIDE(0, 2, 0)
+	deco_bac06_device::set_gfx_region_wide(*device,0,2,0);
 	MCFG_DECO_BAC06_GFXDECODE("gfxdecode")
 
 	MCFG_DEVICE_ADD("spritegen", DECO_MXC06, 0)
-	MCFG_DECO_MXC06_GFX_REGION(3)
+	deco_mxc06_device::set_gfx_region(*device, 3);
 	MCFG_DECO_MXC06_GFXDECODE("gfxdecode")
+	MCFG_DECO_MXC06_PALETTE("palette")
 MACHINE_CONFIG_END
 
 static MACHINE_CONFIG_DERIVED( dec0, dec0_base )
@@ -1433,18 +1405,19 @@ static MACHINE_CONFIG_START( automat, dec0_automat_state )
 	MCFG_SCREEN_PALETTE("palette")
 
 	MCFG_DEVICE_ADD("tilegen1", DECO_BAC06, 0)
-	MCFG_DECO_BAC06_GFX_REGION_WIDE(0, 0, 0)
+	deco_bac06_device::set_gfx_region_wide(*device,0,0,0);
 	MCFG_DECO_BAC06_GFXDECODE("gfxdecode")
 	MCFG_DEVICE_ADD("tilegen2", DECO_BAC06, 0)
-	MCFG_DECO_BAC06_GFX_REGION_WIDE(0, 1, 0)
+	deco_bac06_device::set_gfx_region_wide(*device,0,1,0);
 	MCFG_DECO_BAC06_GFXDECODE("gfxdecode")
 	MCFG_DEVICE_ADD("tilegen3", DECO_BAC06, 0)
-	MCFG_DECO_BAC06_GFX_REGION_WIDE(0, 2, 0)
+	deco_bac06_device::set_gfx_region_wide(*device,0,2,0);
 	MCFG_DECO_BAC06_GFXDECODE("gfxdecode")
 
 	MCFG_DEVICE_ADD("spritegen", DECO_MXC06, 0)
-	MCFG_DECO_MXC06_GFX_REGION(3)
+	deco_mxc06_device::set_gfx_region(*device, 3);
 	MCFG_DECO_MXC06_GFXDECODE("gfxdecode")
+	MCFG_DECO_MXC06_PALETTE("palette")
 
 	MCFG_PALETTE_ADD("palette", 1024)
 	MCFG_PALETTE_FORMAT(xxxxBBBBGGGGRRRR)
@@ -1494,18 +1467,19 @@ static MACHINE_CONFIG_START( secretab, dec0_automat_state )
 	MCFG_SCREEN_PALETTE("palette")
 
 	MCFG_DEVICE_ADD("tilegen1", DECO_BAC06, 0)
-	MCFG_DECO_BAC06_GFX_REGION_WIDE(0, 0, 0)
+	deco_bac06_device::set_gfx_region_wide(*device,0,0,0);
 	MCFG_DECO_BAC06_GFXDECODE("gfxdecode")
 	MCFG_DEVICE_ADD("tilegen2", DECO_BAC06, 0)
-	MCFG_DECO_BAC06_GFX_REGION_WIDE(0, 1, 0)
+	deco_bac06_device::set_gfx_region_wide(*device,0,1,0);
 	MCFG_DECO_BAC06_GFXDECODE("gfxdecode")
 	MCFG_DEVICE_ADD("tilegen3", DECO_BAC06, 0)
-	MCFG_DECO_BAC06_GFX_REGION_WIDE(0, 2, 0)
+	deco_bac06_device::set_gfx_region_wide(*device,0,2,0);
 	MCFG_DECO_BAC06_GFXDECODE("gfxdecode")
 
 	MCFG_DEVICE_ADD("spritegen", DECO_MXC06, 0)
-	MCFG_DECO_MXC06_GFX_REGION(3)
+	deco_mxc06_device::set_gfx_region(*device, 3);
 	MCFG_DECO_MXC06_GFXDECODE("gfxdecode")
+	MCFG_DECO_MXC06_PALETTE("palette")
 
 	MCFG_PALETTE_ADD("palette", 1024)
 	MCFG_PALETTE_FORMAT(xxxxBBBBGGGGRRRR)
