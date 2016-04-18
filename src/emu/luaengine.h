@@ -63,9 +63,11 @@ public:
 	void attach_notifiers();
 	void on_frame_done();
 
-	int compile_with_env(const char *env, const char *script);
-	void run(const char *env, int ref);
-
+	int compile_with_env(const char *envname, const char *script, const char *env = nullptr);
+	template <typename Tout, typename Tin> Tout run(const char *envname, int ref, Tin in);
+	template <typename Tout> Tout run(const char *envname, int ref);
+	template <typename Tin> void run(const char *envname, int ref, Tin in);
+	void run(const char *envname, int ref);
 private:
 	struct hook {
 		lua_State *L;
@@ -139,6 +141,11 @@ private:
 	static int l_emu_register_frame(lua_State *L);
 	static int l_emu_register_frame_done(lua_State *L);
 	static int l_emu_register_menu(lua_State *L);
+	static std::string get_print_buffer(lua_State *L);
+	static int l_osd_printf_verbose(lua_State *L);
+	static int l_osd_printf_error(lua_State *L);
+	static int l_osd_printf_info(lua_State *L);
+	static int l_osd_printf_debug(lua_State *L);
 	static int register_function(lua_State *L, const char *id);
 
 	// "emu.machine" namespace
@@ -213,6 +220,7 @@ private:
 		int l_item_read_block(lua_State *L);
 		int l_item_write(lua_State *L);
 	};
+	void run_internal(const char *env, int ref);
 
 	void resume(void *L, INT32 param);
 	void start();

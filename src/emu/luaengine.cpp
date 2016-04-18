@@ -1720,33 +1720,35 @@ lua_engine::~lua_engine()
 	close();
 }
 
-int lua_engine::compile_with_env(const char *env, const char *script)
+int lua_engine::compile_with_env(const char *envname, const char *script, const char *env)
 {
-	std::string field = std::string("env_").append(env);
+	std::string field = std::string("env_").append(envname);
+	int error;
 	lua_settop(m_lua_state, 0);
 	lua_getfield(m_lua_state, LUA_REGISTRYINDEX, field.c_str());
 
 	if(!lua_istable(m_lua_state, -1))
 	{
-		emu_file file(m_machine->manager().options().plugins_path(), OPEN_FLAG_READ);
-		// optionally load a script to prepare the environment
-		if(file.open(env, ".lua") != osd_file::error::NONE)
-		{
-			int error = luaL_loadfile(m_lua_state, file.fullpath());
-			if(error || (error = lua_pcall(m_lua_state, 0, 0, 0) != LUA_OK))
-			{
-				if(error == LUA_ERRRUN)
-					printf("%s\n", lua_tostring(m_lua_state, -1));
-				lua_pop(m_lua_state, 1);
-			}
-		}
-		if(!lua_istable(m_lua_state, -1))
-			lua_newtable(m_lua_state);
+		lua_newtable(m_lua_state);
 		lua_setfield(m_lua_state, LUA_REGISTRYINDEX, field.c_str());
 		lua_getfield(m_lua_state, LUA_REGISTRYINDEX, field.c_str());
 	}
 
-	if(int error = luaL_loadstring(m_lua_state, script) != LUA_OK)
+	// optionally load a string to prepare the environment
+	if(env)
+	{
+		error = luaL_loadstring(m_lua_state, env);
+		lua_pushvalue(m_lua_state, -2);
+		if((error != LUA_OK) || ((error = lua_pcall(m_lua_state, 1, 0, 0)) != LUA_OK))
+		{
+			if((error == LUA_ERRSYNTAX) || (error == LUA_ERRRUN))
+				printf("%s\n", lua_tostring(m_lua_state, -1));
+			lua_pop(m_lua_state, 1);
+		}
+		lua_getfield(m_lua_state, LUA_REGISTRYINDEX, field.c_str());
+	}
+
+	if((error = luaL_loadstring(m_lua_state, script)) != LUA_OK)
 	{
 		if(error == LUA_ERRSYNTAX)
 			printf("%s\n", lua_tostring(m_lua_state, -1));
@@ -1761,27 +1763,73 @@ int lua_engine::compile_with_env(const char *env, const char *script)
 	return ref;
 }
 
+template <typename Tout, typename Tin>
+Tout lua_engine::run(const char *env, int ref, Tin in)
+{
+	Tout ret;
+	lua_settop(m_lua_state, 0);
+	luabridge::Stack<Tin>::push(m_lua_state, in);
+	run_internal(env, ref);
+	ret = luabridge::Stack<Tout>::get(m_lua_state, 1);
+	lua_pop(m_lua_state, 1);
+	return ret;
+}
+
+template <typename Tout>
+Tout lua_engine::run(const char *env, int ref)
+{
+	Tout ret;
+	lua_settop(m_lua_state, 0);
+	lua_pushnil(m_lua_state);
+	run_internal(env, ref);
+	ret = luabridge::Stack<Tout>::get(m_lua_state, 1);
+	lua_pop(m_lua_state, 1);
+	return ret;
+}
+
+template <typename Tin>
+void lua_engine::run(const char *env, int ref, Tin in)
+{
+	lua_settop(m_lua_state, 0);
+	luabridge::Stack<Tin>::push(m_lua_state, in);
+	run_internal(env, ref);
+	lua_pop(m_lua_state, 1);
+}
+
 void lua_engine::run(const char *env, int ref)
 {
-	std::string field = std::string("env_").append(env);
 	lua_settop(m_lua_state, 0);
+	lua_pushnil(m_lua_state);
+	run_internal(env, ref);
+	lua_pop(m_lua_state, 1);
+}
+// create specialization so luabridge doesn't have to be included everywhere
+template int lua_engine::run<int>(const char *env, int ref);
+
+void lua_engine::run_internal(const char *env, int ref)
+{
+	std::string field = std::string("env_").append(env);
 	lua_getfield(m_lua_state, LUA_REGISTRYINDEX, field.c_str());
 	if(lua_istable(m_lua_state, -1))
 	{
 		lua_rawgeti(m_lua_state, -1, ref);
 		if(lua_isfunction(m_lua_state, -1))
 		{
-			if(int error = lua_pcall(m_lua_state, 0, 0, 0) != LUA_OK)
+			lua_pushvalue(m_lua_state, -3);
+			int error;
+			if((error = lua_pcall(m_lua_state, 1, 1, 0)) != LUA_OK)
 			{
 				if(error == LUA_ERRRUN)
 					printf("%s\n", lua_tostring(m_lua_state, -1));
 				lua_pop(m_lua_state, 1);
+				lua_pushnil(m_lua_state);
 			}
 		}
-		lua_pop(m_lua_state, 1);
 	}
+	lua_replace(m_lua_state, 1);
 	lua_pop(m_lua_state, 1);
 }
+
 void lua_engine::menu_populate(std::string &menu, std::vector<menu_item> &menu_list)
 {
 	std::string field = "menu_pop_" + menu;
@@ -1793,7 +1841,8 @@ void lua_engine::menu_populate(std::string &menu, std::vector<menu_item> &menu_l
 		lua_pop(m_lua_state, 1);
 		return;
 	}
-	if(int error = lua_pcall(m_lua_state, 0, 1, 0) != LUA_OK)
+	int error;
+	if((error = lua_pcall(m_lua_state, 0, 1, 0)) != LUA_OK)
 	{
 		if(error == LUA_ERRRUN)
 			printf("%s\n", lua_tostring(m_lua_state, -1));
@@ -1839,7 +1888,8 @@ bool lua_engine::menu_callback(std::string &menu, int index, std::string event)
 	{
 		lua_pushinteger(m_lua_state, index);
 		lua_pushstring(m_lua_state, event.c_str());
-		if(int error = lua_pcall(m_lua_state, 2, 1, 0))
+		int error;
+		if((error = lua_pcall(m_lua_state, 2, 1, 0)) != LUA_OK)
 		{
 			if(error == 2)
 				printf("%s\n", lua_tostring(m_lua_state, -1));
@@ -1880,7 +1930,8 @@ void lua_engine::execute_function(const char *id)
 		{
 			if (lua_isfunction(m_lua_state, -1))
 			{
-				if(int error = lua_pcall(m_lua_state, 0, 0, 0))
+				int error;
+				if((error = lua_pcall(m_lua_state, 0, 0, 0)) != LUA_OK)
 				{
 					if(error == 2)
 						printf("%s\n", lua_tostring(m_lua_state, -1));
@@ -2020,8 +2071,10 @@ void lua_engine::attach_notifiers()
 int lua_engine::lua_machine::l_popmessage(lua_State *L)
 {
 	running_machine *m = luabridge::Stack<running_machine *>::get(L, 1);
-	luaL_argcheck(L, lua_isstring(L, 2), 2, "message (string) expected");
-	m->popmessage("%s", luaL_checkstring(L, 2));
+	if(!lua_isstring(L, 2))
+		m->popmessage();
+	else
+		m->popmessage("%s", luaL_checkstring(L, 2));
 	return 0;
 }
 
@@ -2030,6 +2083,49 @@ int lua_engine::lua_machine::l_logerror(lua_State *L)
 	running_machine *m = luabridge::Stack<running_machine *>::get(L, 1);
 	luaL_argcheck(L, lua_isstring(L, 2), 2, "message (string) expected");
 	m->logerror("[luaengine] %s\n", luaL_checkstring(L, 2));
+	return 0;
+}
+
+std::string lua_engine::get_print_buffer(lua_State *L)
+{
+    int nargs = lua_gettop(L);
+    
+    const std::string sep = " ";
+    
+    std::ostringstream ss;
+    bool first = true;
+
+    for (int i = 1; i <= nargs; i++) {
+      const char* c = lua_tostring(L, i);
+      const std::string str = c ? c : "<nil>";
+      if (first) first = false;
+      else ss << sep;
+      ss << str;
+    }
+
+	return ss.str();
+}
+int lua_engine::l_osd_printf_verbose(lua_State *L)
+{
+    osd_printf_verbose("%s\n",get_print_buffer(L).c_str());
+	return 0;
+}
+
+int lua_engine::l_osd_printf_error(lua_State *L)
+{
+	osd_printf_error("%s\n",get_print_buffer(L).c_str());
+	return 0;
+}
+
+int lua_engine::l_osd_printf_info(lua_State *L)
+{
+	osd_printf_info("%s\n",get_print_buffer(L).c_str());
+	return 0;
+}
+
+int lua_engine::l_osd_printf_debug(lua_State *L)
+{
+	osd_printf_debug("%s\n",get_print_buffer(L).c_str());
 	return 0;
 }
 
@@ -2064,6 +2160,10 @@ void lua_engine::initialize()
 			.addCFunction ("register_frame", l_emu_register_frame )
 			.addCFunction ("register_frame_done", l_emu_register_frame_done )
 			.addCFunction ("register_menu",  l_emu_register_menu )
+			.addCFunction ("print_verbose", l_osd_printf_verbose )
+			.addCFunction ("print_error",   l_osd_printf_error )
+			.addCFunction ("print_info",    l_osd_printf_info )
+			.addCFunction ("print_debug",   l_osd_printf_debug )
 			.beginClass <machine_manager> ("manager")
 				.addFunction ("machine", &machine_manager::machine)
 				.addFunction ("options", &machine_manager::options)
@@ -2088,6 +2188,7 @@ void lua_engine::initialize()
 				.addFunction ("cheat", &running_machine::cheat)
 				.addFunction ("memory", &running_machine::memory)
 				.addFunction ("options", &running_machine::options)
+				.addFunction ("outputs", &running_machine::output)
 				.addProperty <luabridge::LuaRef, void> ("devices", &lua_engine::l_machine_get_devices)
 				.addProperty <luabridge::LuaRef, void> ("screens", &lua_engine::l_machine_get_screens)
 				.addProperty <luabridge::LuaRef, void> ("images", &lua_engine::l_machine_get_images)
@@ -2155,6 +2256,9 @@ void lua_engine::initialize()
 				.addFunction ("tag", &ioport_port::tag)
 				.addFunction ("active", &ioport_port::active)
 				.addFunction ("live", &ioport_port::live)
+				.addFunction ("read", &ioport_port::read)
+				.addFunction ("write", &ioport_port::write)
+				.addFunction ("field", &ioport_port::field)
 				.addProperty <luabridge::LuaRef, void> ("fields", &lua_engine::l_ioports_port_get_fields)
 			.endClass()
 			.beginClass <ioport_field> ("ioport_field")
@@ -2344,6 +2448,14 @@ void lua_engine::initialize()
 				.addCFunction ("write_i64", &lua_memory_region::l_region_write<INT64>)
 				.addCFunction ("write_u64", &lua_memory_region::l_region_write<UINT64>)
 			.endClass()
+			.beginClass <output_manager> ("output")
+				.addFunction ("set_value", &output_manager::set_value)
+				.addFunction ("set_indexed_value", &output_manager::set_indexed_value)
+				.addFunction ("get_value", &output_manager::get_value)
+				.addFunction ("get_indexed_value", &output_manager::get_indexed_value)
+				.addFunction ("name_to_id", &output_manager::name_to_id)
+				.addFunction ("id_to_name", &output_manager::id_to_name)
+			.endClass()
 			.deriveClass <memory_region, lua_memory_region> ("region")
 				.addProperty <UINT32> ("size", &memory_region::bytes)
 			.endClass()
@@ -2367,11 +2479,16 @@ void lua_engine::initialize()
 			.beginClass <lua_emu_file> ("lua_file")
 				.addCFunction ("read", &lua_emu_file::l_emu_file_read)
 			.endClass()
+			// make sure there's a reference to the emu_file search path in your script as long as you need it
+			// otherwise it might be garbage collected as emu_file doesn't copy the string
 			.deriveClass <emu_file, lua_emu_file> ("file")
 				.addConstructor <void (*)(const char *, UINT32)> ()
 				.addFunction ("open", static_cast<osd_file::error (emu_file::*)(const char *)>(&emu_file::open))
+				.addFunction ("open_next", &emu_file::open_next)
 				.addFunction ("seek", &emu_file::seek)
 				.addFunction ("size", &emu_file::size)
+				.addFunction ("filename", &emu_file::filename)
+				.addFunction ("fullpath", &emu_file::fullpath)
 			.endClass()
 			.beginClass <lua_item> ("item")
 				.addConstructor <void (*)(int)> ()

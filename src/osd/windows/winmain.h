@@ -249,8 +249,14 @@ struct MouseButtonEventArgs
 	int ypos;
 };
 
+// Forward declarations
+struct _EXCEPTION_POINTERS;
+
 class windows_osd_interface : public osd_common_t
 {
+	// Access to exception filter static method
+	friend int main(int argc, char *argv[]);
+
 public:
 	// construction/destruction
 	windows_osd_interface(windows_options &options);
@@ -260,8 +266,11 @@ public:
 	virtual void init(running_machine &machine) override;
 	virtual void update(bool skip_redraw) override;
 
-	// video overridables
+	// input overrideables
 	virtual void customize_input_type_list(simple_list<input_type_entry> &typelist) override;
+
+	// video overridables
+	virtual void add_audio_to_recording(const INT16 *buffer, int samples_this_frame) override;
 
 	virtual void video_register() override;
 
@@ -286,12 +295,15 @@ protected:
 	virtual void build_slider_list() override;
 	virtual void update_slider_list() override;
 
+	void check_osd_inputs();
+
 private:
 	virtual void osd_exit() override;
 
 	windows_options &   m_options;
 
 	static const int DEFAULT_FONT_HEIGHT = 200;
+	static long __stdcall exception_filter(struct _EXCEPTION_POINTERS *info);
 };
 
 #if !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
@@ -306,7 +318,7 @@ private:
 public:
 	MameMainApp();
 
-	// IFrameworkView Methods. 
+	// IFrameworkView Methods.
 	virtual void Initialize(Windows::ApplicationModel::Core::CoreApplicationView^ applicationView);
 	virtual void SetWindow(Windows::UI::Core::CoreWindow^ window);
 	virtual void Load(Platform::String^ entryPoint);
@@ -331,12 +343,5 @@ extern const options_entry mame_win_options[];
 // defined in winwork.c
 extern int osd_num_processors;
 
-
-
-//============================================================
-//  FUNCTION PROTOTYPES
-//============================================================
-
-void winmain_dump_stack();
 
 #endif
